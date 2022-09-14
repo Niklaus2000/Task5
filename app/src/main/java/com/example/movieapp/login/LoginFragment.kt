@@ -5,19 +5,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.movieapp.R
+import com.example.movieapp.base.BaseFragment
 import com.example.movieapp.databinding.FragmentLoginBinding
+import com.example.movieapp.movieList.MoviesViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
-class LoginFragment : Fragment() {
-    private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
+@AndroidEntryPoint
+class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>(FragmentLoginBinding::inflate) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater , container: ViewGroup? ,
-        savedInstanceState: Bundle? ,
-    ): View? {
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
+    override val viewModel: LoginViewModel by viewModels()
+    private lateinit var token: String
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?): Unit = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
+        collectFlow(viewModel.userToken) {
+
+            token = it
+        }
+
+
     }
 }
+
+
+
+

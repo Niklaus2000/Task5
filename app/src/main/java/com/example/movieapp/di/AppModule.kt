@@ -1,6 +1,8 @@
 package com.example.movieapp.di
 
 import android.content.Context
+import com.example.movieapp.core.Dispatchers
+import com.example.movieapp.core.HandleApiRequest
 import com.example.movieapp.core.ProvideResources
 import com.example.movieapp.data.api.MoviesService
 import com.example.movieapp.data.repository.MoviesRepositoryImpl
@@ -23,21 +25,61 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
-    @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
+//    @Provides
+//    @Singleton
+//    fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+//        level = HttpLoggingInterceptor.Level.BODY
+//    }
+//
+//    @Provides
+//    @Singleton
+//    fun provideOkHttpClient(
+//        httpLoggingInterceptor: HttpLoggingInterceptor ,
+//    ): OkHttpClient = OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
+//        .callTimeout(15 , TimeUnit.SECONDS)
+//        .writeTimeout(15 , TimeUnit.SECONDS)
+//        .readTimeout(15 , TimeUnit.SECONDS)
+//        .connectTimeout(15 , TimeUnit.SECONDS)
+//        .retryOnConnectionFailure(true).build()
+//
+//    @Provides
+//    @Singleton
+//    fun provideRetrofitClient(okHttpClient: OkHttpClient): Retrofit =
+//        Retrofit.Builder().baseUrl("https://api.themoviedb.org/3/").addConverterFactory(
+//            MoshiConverterFactory.create(
+//                Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
+//            )
+//        ).client(okHttpClient).build()
+//
+//    @Provides
+//    @Singleton
+//    fun provideRetrofitCurrency(retrofitClient: Retrofit): MoviesService =
+//        retrofitClient.create(MoviesService::class.java)
+//
+//    @Provides
+//    fun provideResources(@ApplicationContext context: Context): ProvideResources =
+//        ProvideResources.Base(context)
+//
+//    @Provides
+//    fun provideMoviesRepository(
+//        moviesService: MoviesService ,
+//        provideResources: ProvideResources ,
+//    ): MoviesRepository = MoviesRepositoryImpl(moviesService , provideResources)
+@Provides
+@Singleton
+fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.BODY
+}
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor ,
+        httpLoggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
-        .callTimeout(15 , TimeUnit.SECONDS)
-        .writeTimeout(15 , TimeUnit.SECONDS)
-        .readTimeout(15 , TimeUnit.SECONDS)
-        .connectTimeout(15 , TimeUnit.SECONDS)
+        .callTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .connectTimeout(15, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true).build()
 
     @Provides
@@ -60,7 +102,14 @@ object AppModule {
 
     @Provides
     fun provideMoviesRepository(
-        moviesService: MoviesService ,
-        provideResources: ProvideResources ,
-    ): MoviesRepository = MoviesRepositoryImpl(moviesService , provideResources)
+        moviesService: MoviesService,
+        handleApiRequest: HandleApiRequest
+    ): MoviesRepository = MoviesRepositoryImpl(moviesService, handleApiRequest)
+
+    @Provides
+    fun provideDispatchers(): Dispatchers = Dispatchers.Base()
+
+    @Provides
+    fun provideBaseApiRequest(provideResources: ProvideResources): HandleApiRequest =
+        HandleApiRequest.Base(provideResources)
 }

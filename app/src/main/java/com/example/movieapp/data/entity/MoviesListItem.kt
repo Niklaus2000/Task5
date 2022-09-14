@@ -39,12 +39,12 @@ data class MoviesListItem(
     @Json(name = "vote_count")
     private val voteCount: Int? ,
 ) {
-    fun bind(binding: MovieListItemBinding) {
-        binding.titleTextView.text = title
-        binding.dateTextView.text = releaseDate
-        binding.ratingTextView.text = voteAverage.toString()
+    fun bind(binding: MovieListItemBinding): Unit = with(binding) {
+        titleTextView.text = title
+        dateTextView.text = releaseDate
+        ratingTextView.text = voteAverage.toString()
         val posterUrl = "$IMAGE_PATH$posterPath"
-        Glide.with(binding.root.context).load(posterUrl)
+        Glide.with(root.context).load(posterUrl)
             .into(binding.posterImageView)
 
 
